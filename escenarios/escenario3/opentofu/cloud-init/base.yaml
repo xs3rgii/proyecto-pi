@@ -29,7 +29,7 @@ write_files:
 # Instala utilidades de teclado (loadkeys). Si no hay red, simplemente seguirá.
 package_update: true
 packages:
-  - kbd 
+  - kbd
   - console-data
 
 
