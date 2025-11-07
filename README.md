@@ -14,7 +14,7 @@ Se ha desarrollado un escenario basado en **OpenTofu** (IaC) y **Ansible** para 
 ## Tecnologías empleadas  
 - OpenTofu: herramienta de Infrastructure as Code utilizada para la definición de infraestructura en HCL.
 - Ansible: herramienta de automatización para configuración de sistemas y despliegue de servicios.
-- Lenguajes y entornos auxiliares: HCL, Shell, PHP, CSS, HTML, Jinja :contentReference[oaicite:2]{index=2}
+- Lenguajes y entornos auxiliares: HCL, Shell, PHP, CSS, HTML, Jinja.
 
 ## Uso del proyecto  
 1. Clona el repositorio:
