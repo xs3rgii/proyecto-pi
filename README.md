@@ -27,3 +27,5 @@ Se ha desarrollado un escenario basado en **OpenTofu** (IaC) y **Ansible** para 
    tofu init
    tofu apply
    ansible-playbok site.yaml
+3. Pagina principal
+![Aplicación de prueba](img/pagina.png)
