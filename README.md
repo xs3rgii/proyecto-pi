@@ -21,3 +21,9 @@ Se ha desarrollado un escenario basado en **OpenTofu** (IaC) y **Ansible** para 
    ```bash
    git clone https://github.com/xs3rgii/proyecto-pi.git
    cd proyecto-pi
+2. Para iniciar el proyecto:
+   ```bash
+   cd escenarios/escenario3
+   tofu init
+   tofu apply
+   ansible-playbok site.yaml
