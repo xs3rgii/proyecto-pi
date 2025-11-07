@@ -1,0 +1,16 @@
+#cloud-config
+hostname: server3
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    shell: /bin/bash
+    ssh-authorized-keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIETSXcfvbkoDutKTxQA0c7AJiQt/IrrrzwqBjiNSRFF/ sroagar2111@sroagar2111
+chpasswd:
+  expire: False
+  users:
+    - name: ubuntu
+      password: asdasd
+      type: text
+package_update: true
