@@ -30,5 +30,9 @@ Se ha desarrollado un escenario basado en **OpenTofu** (IaC) y **Ansible** para 
 3. Pagina principal
 ![Aplicación de prueba](img/pagina.png)
 
+
+
+
+
 4. Escenario
 ![Escenario](img/proyecto1.png)
