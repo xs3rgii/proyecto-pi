@@ -20,14 +20,6 @@ locals {
       autostart = true
     }
 
-    red-conf = {
-      name      = "red-conf"
-      mode      = "none" # sin conectividad
-      addresses = ["192.168.201.0/24"]
-      bridge    = "br-conf"
-      autostart = true
-    }
-
     red-datos = {
       name      = "red-datos"
       mode      = "none" # sin conectividad
@@ -48,8 +40,7 @@ locals {
       base_image = "debian13-base.qcow2"
 
       networks = [
-        { network_name = "red-externa", wait_for_lease = true },
-        { network_name = "red-conf" },
+        { network_name = "red-externa", wait_for_lease = false },
         { network_name = "red-datos" }
       ]
 
@@ -64,8 +55,7 @@ locals {
       base_image = "ubuntu2404-base.qcow2"
 
       networks = [
-        { network_name = "red-externa", wait_for_lease = true },
-        { network_name = "red-conf" },
+        { network_name = "red-externa", wait_for_lease = false },
         { network_name = "red-datos" }
       ]
 
