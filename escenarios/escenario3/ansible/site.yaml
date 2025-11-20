@@ -1,14 +1,37 @@
 - hosts: all
   become: true
   roles:
-   - role: commons
+    - role: commons
 
 - hosts: servidores_web
   become: true
+  tasks:
+    - name: Eliminar VirtualHosts antiguos
+      file:
+        path: "/etc/apache2/sites-enabled/{{ item }}"
+        state: absent
+      loop:
+        - 000-default.conf
+        - example.conf
+
+    - name: Eliminar VirtualHosts antiguos (sites-available)
+      file:
+        path: "/etc/apache2/sites-available/{{ item }}"
+        state: absent
+      loop:
+        - 000-default.conf
+        - example.conf
+
+    - name: Reiniciar Apache después de limpiar VH
+      service:
+        name: apache2
+        state: restarted
+
   roles:
-   - role: apache2
+    - role: apache2
+    - role: wordpress
 
 - hosts: servidores_bd
   become: true
   roles:
-   - role: mariadb
+    - role: mariadb

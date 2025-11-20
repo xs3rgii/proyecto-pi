@@ -1,29 +1,44 @@
-# Lista con diccionarios para indicar los datos de los virtualhost que se van a crear:
-# apache2
+# Virtualhosts Apache2
 virtualhosts:
-  - name: example
+  - name: guestbook
     datos:
-      nameserver: www.example.org 
-      documentroot: /var/www/example
-      errorlog: error_example
-      accesslog: acceses_example
+      nameserver: www.localguestbook.org
+      documentroot: /var/www/guestbook
+      errorlog: error_guestbook
+      accesslog: access_guestbook
 
+  - name: wordpress
+    datos:
+      nameserver: www.localwordpress.org
+      documentroot: /var/www/wordpress
+      errorlog: error_wordpress
+      accesslog: access_wordpress
 
-# Lista con los módulos que hay que activar
+# Módulos Apache
 mods_enabled:
   - rewrite
 
-
-# URL del repositorio
+# Guestbook
 guestbook_repo_url: "https://github.com/josedom24/guestbook_php.git"
+guestbook_base_web_path: "/var/www/guestbook"
 
-# Opcional: ruta base donde se alojarán los DocumentRoot
-base_web_path: "/var/www/example"
+# WordPress
+wordpress_base_web_path: "/var/www/wordpress"
+wordpress_db_name: "wordpress"
+wordpress_db_user: "wpuser"
+wordpress_db_password: "wp_password_123"
+wordpress_db_host: "{{ hostvars[groups['servidores_bd'][0]].ansible_host }}"
 
+# Instalación automática de WordPress
+wordpress_site_url: "http://www.localwordpress.org"
+wordpress_site_title: "Mi WordPress"
+wordpress_admin_user: "admin"
+wordpress_admin_password: "adminpass123"
+wordpress_admin_email: "admin@example.org"
+wordpress_site_locale: "es_ES"
 
-# Variables de conexión a MariaDB para la aplicación guestbook
-
-guestbook_db_host: "mariadb.example.org"
+# Variables MariaDB para Guestbook
+guestbook_db_host: "{{ hostvars[groups['servidores_bd'][0]].ansible_host }}"
 guestbook_db_user: "guestbook_user"
 guestbook_db_password: "guestbook_pass"
 guestbook_db_name: "guestbook_db"

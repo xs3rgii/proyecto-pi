@@ -1,15 +1,13 @@
 <VirtualHost *:80>
-	ServerName {{item.datos.nameserver}}
-	ServerAdmin webmaster@localhost
-	DocumentRoot {{item.datos.documentroot}}
+    ServerName {{ item.datos.nameserver }}
+    DocumentRoot {{ item.datos.documentroot }}
 
-	<Directory {{ item.datos.documentroot }}>
+    ErrorLog ${APACHE_LOG_DIR}/{{ item.datos.errorlog }}.log
+    CustomLog ${APACHE_LOG_DIR}/{{ item.datos.accesslog }}.log combined
+
+    <Directory {{ item.datos.documentroot }}>
         Options Indexes FollowSymLinks
         AllowOverride All
         Require all granted
     </Directory>
-
-	ErrorLog ${APACHE_LOG_DIR}/{{item.datos.errorlog}}.log
-	CustomLog ${APACHE_LOG_DIR}/{{item.datos.accesslog}}.log combined
-
 </VirtualHost>

@@ -1,4 +1,4 @@
-- name: ensure mariadb is installed
+- name: Instalar MariaDB
   apt:
     pkg:
       - mariadb-server
@@ -6,13 +6,13 @@
     state: latest
     update_cache: yes
 
-- name: Crear base de datos
+- name: Crear base de datos Guestbook
   community.mysql.mysql_db:
     name: "{{ guestbook_db_name }}"
     state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
 
-- name: Crear usuario y otorgar privilegios
+- name: Crear usuario Guestbook
   community.mysql.mysql_user:
     name: "{{ guestbook_db_user }}"
     password: "{{ guestbook_db_password }}"
@@ -21,7 +21,7 @@
     state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
 
-- name: Copiar esquema SQL al servidor MariaDB
+- name: Copiar esquema Guestbook
   ansible.builtin.copy:
     src: schema.sql
     dest: /tmp/schema.sql
@@ -32,15 +32,13 @@
     query: "SHOW TABLES FROM {{ guestbook_db_name }} LIKE 'messages';"
   register: table_check
 
-- name: Importar esquema SQL (solo si la tabla no existe)
+- name: Importar esquema Guestbook solo si no existe
   community.mysql.mysql_db:
     name: "{{ guestbook_db_name }}"
     state: import
     target: /tmp/schema.sql
     login_unix_socket: /var/run/mysqld/mysqld.sock
   when: table_check.query_result[0] | length == 0
-
-
 
 - name: Configurar MariaDB para escuchar en todas las interfaces
   ansible.builtin.lineinfile:
@@ -49,3 +47,18 @@
     line: 'bind-address = 0.0.0.0'
     state: present
   notify: restart mariadb
+
+- name: Crear base de datos de WordPress
+  community.mysql.mysql_db:
+    name: "{{ wordpress_db_name }}"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Crear usuario de WordPress
+  community.mysql.mysql_user:
+    name: "{{ wordpress_db_user }}"
+    password: "{{ wordpress_db_password }}"
+    host: "%"
+    priv: "{{ wordpress_db_name }}.*:ALL"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
