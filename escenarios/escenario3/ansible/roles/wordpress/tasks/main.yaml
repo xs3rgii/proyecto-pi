@@ -1,0 +1,50 @@
+- name: Descargar WordPress
+  get_url:
+    url: https://wordpress.org/latest.tar.gz
+    dest: /tmp/wordpress.tar.gz
+    mode: '0644'
+
+- name: Extraer WordPress
+  unarchive:
+    src: /tmp/wordpress.tar.gz
+    dest: /var/www/
+    remote_src: yes
+
+- name: Copiar WordPress al VirtualHost
+  command: cp -r /var/www/wordpress/* {{ wordpress_base_web_path }}/
+  args:
+    creates: "{{ wordpress_base_web_path }}/wp-admin"
+
+- name: Configurar permisos para Apache
+  file:
+    path: "{{ wordpress_base_web_path }}"
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- name: Copiar wp-config.php
+  template:
+    src: wp-config.php.j2
+    dest: "{{ wordpress_base_web_path }}/wp-config.php"
+    mode: '0644'
+
+- name: Descargar WP-CLI
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /usr/local/bin/wp
+    mode: '0755'
+
+- name: Instalar WordPress automáticamente con WP-CLI
+  command: >
+    wp core install
+    --url={{ wordpress_site_url }}
+    --title="{{ wordpress_site_title }}"
+    --admin_user={{ wordpress_admin_user }}
+    --admin_password={{ wordpress_admin_password }}
+    --admin_email={{ wordpress_admin_email }}
+    --locale={{ wordpress_site_locale }}
+    --skip-email
+    --allow-root
+  args:
+    chdir: "{{ wordpress_base_web_path }}"
+  become: true
