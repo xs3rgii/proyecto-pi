@@ -34,6 +34,13 @@
     dest: /usr/local/bin/wp
     mode: '0755'
 
+- name: Esperar a que MariaDB acepte conexiones
+  wait_for:
+    host: "{{ wordpress_db_host }}"
+    port: 3306
+    delay: 5
+    timeout: 60
+
 - name: Instalar WordPress automáticamente con WP-CLI
   command: >
     wp core install
@@ -47,4 +54,3 @@
     --allow-root
   args:
     chdir: "{{ wordpress_base_web_path }}"
-  become: true

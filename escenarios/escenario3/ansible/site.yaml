@@ -1,3 +1,8 @@
+- hosts: servidores_bd
+  become: true
+  roles:
+    - role: mariadb
+
 - hosts: all
   become: true
   roles:
@@ -30,8 +35,3 @@
   roles:
     - role: apache2
     - role: wordpress
-
-- hosts: servidores_bd
-  become: true
-  roles:
-    - role: mariadb
