@@ -1,0 +1,29 @@
+---
+- name: Instalar Docker en Debian/Ubuntu
+  apt:
+    name: docker.io
+    state: present
+    update_cache: true
+
+- name: Habilitar y arrancar el servicio Docker
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Crear grupo docker si no existe
+  group:
+    name: docker
+    state: present
+
+- name: Añadir usuario normal al grupo docker
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+
+- name: Asegurar que /var/run/docker.sock pertenece al grupo docker
+  file:
+    path: /var/run/docker.sock
+    group: docker
+    mode: '0660'
