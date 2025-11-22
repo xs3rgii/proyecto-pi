@@ -10,8 +10,9 @@
 
 - hosts: servidores_web
   become: true
+
   tasks:
-    - name: Eliminar VirtualHosts antiguos
+    - name: Eliminar VirtualHosts antiguos (sites-enabled)
       file:
         path: "/etc/apache2/sites-enabled/{{ item }}"
         state: absent
@@ -35,3 +36,4 @@
   roles:
     - role: apache2
     - role: wordpress
+    - role: game2048

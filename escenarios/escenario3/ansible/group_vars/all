@@ -33,7 +33,7 @@ wordpress_db_host: "{{ hostvars[groups['servidores_bd'][0]].ansible_host }}"
 wordpress_site_url: "http://www.localwordpress.org"
 wordpress_site_title: "Mi WordPress"
 wordpress_admin_user: "admin"
-wordpress_admin_password: "adminpass123"
+wordpress_admin_pass: "adminpass123"        # ← corregido aquí
 wordpress_admin_email: "admin@example.org"
 wordpress_site_locale: "es_ES"
 

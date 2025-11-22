@@ -14,3 +14,9 @@
     owner: root
     group: root
     mode: '0644'
+
+- name: Añadir dominio 2048 al /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ hostvars[groups['servidores_web'][0]].ansible_host }}   www.local2048.org"
+    state: present

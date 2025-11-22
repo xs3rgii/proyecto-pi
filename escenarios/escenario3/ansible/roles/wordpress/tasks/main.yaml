@@ -1,32 +1,43 @@
+- name: Comprobar si WordPress ya está instalado (carpeta wp-admin)
+  stat:
+    path: "{{ wordpress_base_web_path }}/wp-admin"
+  register: wp_admin_dir
+
 - name: Descargar WordPress
   get_url:
     url: https://wordpress.org/latest.tar.gz
     dest: /tmp/wordpress.tar.gz
-    mode: '0644'
+  when: not wp_admin_dir.stat.exists
 
-- name: Extraer WordPress
+- name: Extraer WordPress en /tmp
   unarchive:
     src: /tmp/wordpress.tar.gz
-    dest: /var/www/
+    dest: /tmp/
     remote_src: yes
+  when: not wp_admin_dir.stat.exists
 
-- name: Copiar WordPress al VirtualHost
-  command: cp -r /var/www/wordpress/* {{ wordpress_base_web_path }}/
-  args:
-    creates: "{{ wordpress_base_web_path }}/wp-admin"
-
-- name: Configurar permisos para Apache
-  file:
-    path: "{{ wordpress_base_web_path }}"
+- name: Copiar WordPress al DocumentRoot
+  copy:
+    src: /tmp/wordpress/
+    dest: "{{ wordpress_base_web_path }}/"
     owner: www-data
     group: www-data
-    recurse: yes
+    mode: '0644'
+    remote_src: yes
+  when: not wp_admin_dir.stat.exists
 
-- name: Copiar wp-config.php
+- name: Eliminar directorio temporal WordPress
+  file:
+    path: /tmp/wordpress
+    state: absent
+  when: not wp_admin_dir.stat.exists
+
+- name: Generar wp-config.php
   template:
     src: wp-config.php.j2
     dest: "{{ wordpress_base_web_path }}/wp-config.php"
-    mode: '0644'
+    owner: www-data
+    group: www-data
 
 - name: Descargar WP-CLI
   get_url:
@@ -34,23 +45,25 @@
     dest: /usr/local/bin/wp
     mode: '0755'
 
-- name: Esperar a que MariaDB acepte conexiones
-  wait_for:
-    host: "{{ wordpress_db_host }}"
-    port: 3306
-    delay: 5
-    timeout: 60
+- name: Comprobar instalación WordPress
+  command: wp core is-installed --path="{{ wordpress_base_web_path }}" --allow-root
+  register: wp_installed
+  failed_when: false
+  changed_when: false
+  become: true
 
-- name: Instalar WordPress automáticamente con WP-CLI
+- name: Ejecutar instalación inicial de WordPress con WP-CLI
   command: >
     wp core install
-    --url={{ wordpress_site_url }}
-    --title="{{ wordpress_site_title }}"
-    --admin_user={{ wordpress_admin_user }}
-    --admin_password={{ wordpress_admin_password }}
-    --admin_email={{ wordpress_admin_email }}
-    --locale={{ wordpress_site_locale }}
-    --skip-email
-    --allow-root
+      --path={{ wordpress_base_web_path }}
+      --url={{ wordpress_site_url }}
+      --title="{{ wordpress_site_title }}"
+      --admin_user={{ wordpress_admin_user }}
+      --admin_password={{ wordpress_admin_pass }}
+      --admin_email={{ wordpress_admin_email }}
+      --allow-root
   args:
     chdir: "{{ wordpress_base_web_path }}"
+  become: true
+  when: wp_installed.rc != 0
+  changed_when: false

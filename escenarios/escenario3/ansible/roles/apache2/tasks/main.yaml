@@ -14,39 +14,34 @@
   community.general.apache2_module:
     state: present
     name: "{{ item }}"
-  with_items: 
-    - "{{ mods_enabled }}"
+  loop: "{{ mods_enabled }}"
   notify: restart apache2
 
 - name: Configuración de virtualhost
   template: 
     src: etc/apache2/vhost.j2
-    dest: /etc/apache2/sites-available/{{ item["name"] }}.conf
+    dest: /etc/apache2/sites-available/{{ item.name }}.conf
     owner: root
     group: root
-  with_items:
-    - "{{ virtualhosts }}"
+  loop: "{{ virtualhosts }}"
 
 - name: Crear DocumentRoot si no existe
   ansible.builtin.file:
-    path: "/{{ item['datos']['documentroot'] }}"
+    path: "{{ item.datos.documentroot }}"
     state: directory
     owner: www-data
     group: www-data
     mode: '0755'
-  with_items:
-    - "{{ virtualhosts }}"
+  loop: "{{ virtualhosts }}"
 
 - name: Activación de los VirtualHost
   file:
-    src: /etc/apache2/sites-available/{{ item["name"] }}.conf
-    dest: /etc/apache2/sites-enabled/{{ item["name"] }}.conf
+    src: /etc/apache2/sites-available/{{ item.name }}.conf
+    dest: /etc/apache2/sites-enabled/{{ item.name }}.conf
     state: link
-  with_items:
-    - "{{ virtualhosts }}"
+  loop: "{{ virtualhosts }}"
   notify: restart apache2
 
-# --- Guestbook ---
 - name: Copiar aplicación Guestbook
   ansible.builtin.copy:
     src: app/
@@ -55,10 +50,29 @@
     group: www-data
     mode: '0644'
     directory_mode: '0755'
-  
+
 - name: Crear fichero de configuración config.php dentro de la aplicación
   ansible.builtin.template:
     src: config.php.j2
     dest: "{{ guestbook_base_web_path }}/config.php"
     owner: www-data
     group: www-data
+
+- name: Activar módulos proxy para 2048
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - proxy
+    - proxy_http
+
+- name: Crear VirtualHost 2048
+  template:
+    src: 2048.conf.j2
+    dest: /etc/apache2/sites-available/2048.conf
+
+- name: Activar VirtualHost 2048
+  command: a2ensite 2048.conf
+  args:
+    creates: /etc/apache2/sites-enabled/2048.conf
+
