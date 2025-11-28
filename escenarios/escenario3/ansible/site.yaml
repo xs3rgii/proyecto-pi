@@ -36,4 +36,5 @@
   roles:
     - role: apache2
     - role: wordpress
+    - role: docker
     - role: game2048
