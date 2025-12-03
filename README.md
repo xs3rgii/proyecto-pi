@@ -8,8 +8,6 @@ Se ha desarrollado un escenario basado en **OpenTofu** (IaC) y **Ansible** para 
 ## Estructura del repositorio  
 - `terraform/` → Directorio que contiene los módulos de OpenTofu para aprovisionamiento de infraestructura.
 - `escenarios/escenario3/` → Un escenario específico configurado para este proyecto.
-- `ejemplos/` → Archivos de ejemplo que muestran la utilización de los módulos y plantillas.
-- `README.md` → Este archivo de documentación que estás leyendo.
 
 ## Tecnologías empleadas  
 - OpenTofu: herramienta de Infrastructure as Code utilizada para la definición de infraestructura en HCL.
